@@ -1,14 +1,3 @@
-
-network<-network.test
-node.scores<-node.score
-edge.scores<-edge.score
-
-network=network.test
-node.scores=node.score
-edge.scores=edge.score
-
-
-
 runFastHeinz.e<-function(network, node.scores,edge.scores) {
 
 library(igraph)
