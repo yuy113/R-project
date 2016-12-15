@@ -1,0 +1,445 @@
+ % I USED PDFLATEX TO COMPILE THIS PRESENTATION BECAUSE OF THE
+%   GRAPHIC FILE TYPES I HAD.
+% IF YOU WOULD LIKE TO COMPILE IT YOURSELF, COMMENT OUT
+%   ALL OF THE FIGURES AND MOVIE AND YOU WILL BE ABLE TO
+%   COMPILE WITH BOTH PDFLATEX AND LATEX+DVIPS.
+
+\documentclass[10pt]{beamer}
+
+
+% USE THE "HANDOUT" OPTION TO CREATE HANDOUTS
+%\documentclass[handout]{beamer}
+
+% THIS PUTS TWO SLIDES ON EACH PAGE
+%\usepackage{pgfpages}
+%\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+
+\usetheme{Ilmenau}
+\usepackage{time}             % date and time
+\usepackage{graphicx, epsfig}
+\usepackage[T1]{fontenc}      % european characters
+\usepackage{amssymb,amsmath}  % use mathematical symbols
+\usepackage{palatino}         % use palatino as the default font
+\usepackage{multimedia}
+\usepackage{subfigure}
+\usepackage{mathrsfs}
+\usepackage{latexsym}
+\usepackage{amsmath,epsfig,epsf,psfrag}
+\usepackage{amssymb}
+\usepackage{biblatex}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{graphicx}
+\usecolortheme{whale}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bi}{\begin{itemize}}
+	\newcommand{\ei}{\end{itemize}}
+\newcommand{\bn}{\begin{enumerate}}
+	\newcommand{\en}{\end{enumerate}}
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\bey}{\begin{eqnarray}}
+\newcommand{\eey}{\end{eqnarray}}
+\newcommand{\beyn}{\begin{eqnarray*}}
+	\newcommand{\eeyn}{\end{eqnarray*}}
+\newcommand{\ba}{\begin{array}}
+	\newcommand{\ea}{\end{array}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Sum}{\displaystyle\sum}
+\newcommand{\Prod}{\displaystyle\prod}
+% CREATES SHADED INSTEAD OF HIDDEN OVERLAYS
+%\setbeamercovered{transparent}
+
+
+% SOME COMMANDS I'VE CREATED FOR LONG COMMANDS I USE OFTEN
+\newcommand{\ds}{\displaystyle}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\der}[2]{\frac{d #1}{d #2}}
+\newcommand{\pder}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\inv}{^{-1}}
+\newcommand{\mat}[1]{\textbf{#1}}
+
+
+
+\title{Detection of optimized subnetwork based on node scores and edge scores in metabolic network}
+
+\author{Yubing Yao,  Denise Scholtens,Michael Nodzenski, Raji Balasubramanian}
+\institute{University of Massachusetts, Amherst\\
+	} % COMMAND UNIQUE TO BEAMER
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%
+\section[Outline]{}
+%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+  \tableofcontents
+\end{frame}
+
+\section{Goal}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+	\frametitle{Goal}
+	 To develop an efficient algorithm to detect optimized subnetwork based on node scores and edge scores in metabolic network. \pause
+		\\
+		\vspace{1ex}
+		\begin{enumerate}
+			\item<1-> \textbf{Data type}:Case control studies with metabolic data
+		\item<2-> Optimized subnetwork is to maximize the node scores and edge scores.
+			\item<3-> Node score is proportional to the strength of its association with an outcome of interest.
+			\item<4-> Edge score reflects the statistical strength of data driven connections (correlations) between metabolite pairs.
+		
+	\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Background and Data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+  \frametitle{The data feature of metabolic network}
+    \begin{enumerate}
+   \item<1-> Metabolic networks, in which nodes represent distinct metabolites and undirected edges between nodes are weighted by the magnitude of the correlation between the pair of nodes (metabolites). \pause
+   \\
+    \vspace{1ex}
+   \item<2-> Metabolic networks different from genomic or proteomic networks in which edges denote pathway relationships or physical interactions (e.g. PPI).
+    \pause
+    \\
+   \vspace{1ex}
+    \item<3-> The only information we have about the association among the nodes in the metabolic network is the correlation between the nodes(metabolites).
+    
+  \end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Methods for identification of functional modules in biological network}
+  \begin{enumerate}
+    \item<1-> Various robust and/or efficient algorithms have been proposed to identify the functional modules in protein-protein interaction networks or integrated network incorporating gene expression profiles, transcriptome, and proteome data.
+    \pause
+   \vspace{1ex}
+    \item<2-> Of particular interest to our research are algorithms to identify optimal connected subnetworks based on maximizing a scoring function from nodes or edges of a network  (Ideker et al. 2002, Guo et al. 2007).
+    \pause
+    \vspace{1ex}
+   
+    \item<3-> Dittrich et al. (2008) proposed the exact solution to find the maximally node scoring subnetwork through interger-linear programming.
+
+  \end{enumerate}
+\end{frame}
+
+\section{Our proposed method}
+
+\begin{frame}[fragile]
+  \frametitle{Derivation of node scores in the metabolic network}
+     \vspace{-2ex}
+  \begin{enumerate}
+  	\item<1-> 
+  Assume that the case control data with $n$ subjects with $p$ metabolites measured on each subject. $p$ p-values-$p_j$ from some statistical test on $p$ metabolites.
+   \vspace{1ex}
+  	\item<2-> $p_j\sim \lambda B(a,1) +(1-\lambda)B(1,1),0<a<1,0\leq\lambda\leq 1,j=1,\ldots,p$
+  	\vspace{1ex}
+  		\item<3-> An adjusted log likelihood ratio node score with a threshold P-value-$\tau_1(FDR_1)$:\\
+  		\be
+  		\ba{rcl}
+  		S^{FDR_1}(x)&=&\log(\frac{ax^{a-1}}{a\tau_{1}^{a-1}})\\
+  		&=&(a-1)(\log(x)-\log(\tau_1(FDR_1)))
+  		\ea
+  		\ee
+      \end{enumerate}
+\end{frame}
+  
+
+  
+
+\begin{frame}[fragile]
+	\frametitle{Derivation of edge scores in the metabolic network-1}
+	\begin{enumerate}
+		\item<1-> Permutation test on $H_0:\rho_{ij}=0, H_1:\rho_{ij}\neq 0,i\neq j=1,2,\ldots,p$
+		\vspace{2ex}
+		\item<2-> The exact Monte Carlo p-value under null distribution of the permutation test (Gordon and Phipson 2010): \be
+		P(|\rho_{ij}^{perm}|\geq |\rho_{ij}^{obs}|)=\frac{b+1}{m+1}
+		\ee
+		\vspace{1ex}
+		where $m$ is the number of permutation samples and $b$ is the number of times out of $m$ that $|\rho_{ij}^{perm}|\geq |\rho_{ij}^{obs}|$.
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Derivation of edge scores in the metabolic network-2}
+\begin{enumerate}
+	\item<1-> The aggregated(ordered) $\frac{p(p-1)}{2}$ p-values based on permutation test of the correlations in the metabolic network are $P_{(1)},P_{(2)},\ldots,P_{(\frac{p(p-1)}{2})}$
+		
+\item<2-> $P_{i}\sim \lambda B(b,1) +(1-\lambda)B(1,1),0<b<1,0\leq\lambda\leq 1,i=1,\ldots,\frac{p(p-1)}{2}$
+		\vspace{1ex}
+\item<3-> An adjusted log likelihood ratio edge score with a threshold P-value-$\tau_2(FDR_2)$:\\
+		\be
+		\ba{rcl}
+		S^{FDR_2}(z)&=&\log(\frac{bz^{b-1}}{b\tau_{2}^{b-1}})\\
+		&=&(b-1)(\log(z)-\log(\tau_2(FDR_2)))
+		\ea
+		\ee
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Multiplicity in multiple testing of the nodes and edges in metabolic network}
+	\vspace{-2ex}
+		\begin{enumerate}
+			\item<1-> 
+	In order to adjust the multiplicity in multiple testing of both the nodes and edges in metabolic network, we set overall FDR level in the multiple testing in all the nodes and the edges-$FDR=\alpha$.
+		\vspace{3ex}
+		\item<2-> Equally split the overall FDR level $\alpha$ to the nodes and the edges such that $FDR_1=FDR_2=\alpha/2$
+	\en
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+	\frametitle{Optimization of both node scores and edge scores in metabolic network}
+	Our objective is to identify optimized sub-network(potential functional module) through maximizing the sum of both node scores and edge scores in the network:
+	\vspace{2ex}
+\begin{block}{Optimization of sum of node scores and edge scores}
+\be
+\label{eq:eq11}
+S^{FDR}_{subnet}=S^{FDR_1}_{subnet}+S^{FDR_2}_{subnet}=\Sigma_{x_i\in subnet}S^{FDR_1}(x_i)+\Sigma_{z_{ij}\in subnet}S^{FDR_2}(z_{ij})
+\ee
+
+\end{block} 
+	
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+	\frametitle{An introduction of heuristic optimization algorithm}
+		\begin{enumerate}
+			\item<1->
+ We propose an algorithm that is adapted from the BioNet library implemented in R (Dittrich et al. 2010). 
+ \vspace{1ex}
+ 	\item<2->
+ The revised algorithm is developed to identify an optimized subnetwork by maximizing the sum of both node scores and edge scores in the network. 
+  \vspace{1ex}
+ 	\item<3->
+ Key changes in our proposed algorithm when compared to that implemented in Dittrich et al. (2010) is that our methods are based on a combination of both node and edge scores.
+\en
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{Simulation Results}
+%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+  \frametitle{Simulation scenarios}
+  \vspace{-2ex}
+Simulate the network data with two random graph models with the number of nodes same as the number of nodes from a real metabolic network data-472:
+  \bn
+  \item<1->
+  Erd\"{o}s-R\'{e}nyi random graph (ER) model (Erd\"{o}s, P., R\'{e}nyi, A. 1959) with different connecting probabilities-$p=0.1,0.3$.
+  \vspace{2ex} 
+   \item<2-> Barab\'{a}si-Albert random graph (BA) model (Barab\'{a}si A., Albert R. 1999) with degrees of power-$power=1,3$ with approximately same corresponding number of edges as Erd\"{o}s-R\'{e}nyi random graph model with $p=0.1,0.3$. 
+	\en
+\end{frame}
+	
+\begin{frame}[fragile]
+	\frametitle{Comparison of other score based optimization methods to detect optimized subnetwork}
+	\vspace{-2ex}
+	Our proposed heuristic optimization method will compare to other two similar methods:
+		\vspace{1ex}
+		\bn
+		\item<1->
+the heuristic optimized subnetwork detection algorithm(Dittrich-node) based only on the node scores of the network from  Ditrrich et. al. (2008, 2010)
+	\vspace{2ex} 
+	\item<2->the exact optimized subnetwork detection algorithm(Dittrich-nodeedge) based on both node scores and edge scores of the network proposed in Ditrrich et.al. (2012). 
+	\en
+\end{frame}	
+	
+	
+\begingroup
+\small 
+\begin{frame}[fragile]
+	\frametitle{Consistency of our optimization method to detect optimized subnetwork}
+Node scores$\sim Uniform(-2,2)$,edge scores$\sim Uniform(-4,4)$.\\
+	Percentage: average percentage of size of detected optimized subnetwork versus the total number of nodes 
+	\begin{table}[!ht]
+		\centering
+		\resizebox{11.5cm}{1.05cm}{
+			\begin{tabular}{|r|r|r|r|r|r|r|}
+				\hline
+			Methods/Percentage	& ER,p=0.1  &ER,p=0.3&BA,power=1($p\approx 0.1$)&BA,power=1($p\approx 0.3$)&BA,power=3($p\approx 0.1$)&BA,power=3($p\approx 0.3$)\\
+				\hline
+				Our proposed method	& 0.024  & 0.028 &0.026&0.029& 0.032&0.036  \\ 
+				\hline
+				Dittrich-node 	&  0.013  & 0.017 &0.014&0.026& 0.024&0.027\\ 
+				\hline
+				Dittrich-nodeedge			& 0.021  & 0.024 &0.023&0.027& 0.029&0.031  \\				
+				\hline
+			\end{tabular}}
+		\end{table}
+\end{frame}
+\endgroup
+
+
+
+
+\begingroup
+\small 
+\begin{frame}[fragile]
+	\frametitle{Efficiency of our optimization method to detect optimized subnetwork}
+	Repeated simulation number$=100$, \\
+	3 positive scoring cluster with the size-50 \\
+	 First cluster-node scores$\sim Uniform(0.1,2)$,edge scores$\sim Uniform(0.1,4)$;\\
+	 Second cluster-node scores$\sim Uniform(0.1,2)$,edge scores$\sim Uniform(-4,4)$;\\
+	Third cluster-node scores$\sim Uniform(0.1,2)$,edge scores$\sim Uniform(-4,-0.1)$; \\
+	Other nodes with scores$\sim Uniform(-2,-0.1)$, edges connecting any two nodes in 3 positive scoring clusters$\sim Uniform(-4,-2.1)$, other edges with scores$\sim Uniform(-4,4)$ 
+	\\
+Percentage1: average percentage of the number of nodes within detected optimized subnetwork in 1st positive scoring cluster versus the size of 1st positive scoring cluster\\
+Percentage2: average percentage of the number of nodes NOT within detected optimized subnetwork but in other two positive scoring cluster versus the total size of other two positive scoring cluster 
+\end{frame}
+\endgroup
+
+\begingroup
+	\small 
+\begin{frame}[fragile]
+\frametitle{Accuracy and specificity of our optimization method to detect optimized subnetwork}
+\vspace{-2ex}
+	\begin{table}[!ht]
+		\caption {Accuracy of our method comparing to other two methods}  
+		\centering
+		\resizebox{11.5cm}{1.05cm}{
+			\begin{tabular}{|r|r|r|r|r|r|r|}
+				\hline
+				Methods/Percentage1	& ER,p=0.1  &ER,p=0.3&BA,power=1($p\approx 0.1$)&BA,power=1($p\approx 0.3$)&BA,power=3($p\approx 0.1$)&BA,power=3($p\approx 0.3$)\\
+				\hline
+				Our proposed method	& 0.896  & 1 &1&1& 1&1  \\ 
+				\hline
+				Dittrich-node 	& 1  & 1 &1&1& 1&1\\ 
+				\hline
+				Dittrich-nodeedge			& 1  &1 &1&1& 1&1  \\
+					
+				\hline
+			\end{tabular}}
+		\end{table}
+		\vspace{-2ex}
+				\begin{table}[!ht]
+						\caption {Specificity of our method comparing to other two methods} 
+					\centering
+					\resizebox{11.5cm}{1.05cm}{
+						\begin{tabular}{|r|r|r|r|r|r|r|}
+							\hline
+					Methods/Percentage2	& ER,p=0.1  &ER,p=0.3&BA,power=1($p\approx 0.1$)&BA,power=1($p\approx 0.3$)&BA,power=3($p\approx 0.1$)&BA,power=3($p\approx 0.3$)\\
+					\hline
+					Our proposed method	& 0.658  & 0.359 &0.647&0.434& 0.617&0.376  \\ 
+					\hline
+					Dittrich-node 	&  0.255  & 0.25 &0.215&0.195& 0.267&0.261\\ 
+					\hline
+					Dittrich-nodeedge& 0.758  & 0.513 &0.714&0.627& 0.782&0.543 \\				
+				\hline
+			\end{tabular}}
+		\end{table}
+\end{frame}
+\endgroup 
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Summary and Future work}
+\begin{frame}[fragile]
+	\frametitle{Summary}
+	  \bn
+	  \item<1->
+	Our proposed optimized method accounts for statistical strength of both association of metabolites(nodes) with the outcome and also uncertainties of the correlations(edges) in the process of deriving the optimal subnetwork. }
+	\\
+	\vspace{1ex}
+	\item<2->
+	An heuristic optimized algorithm in R is developed and is compared to two closely related algorithms in the simulation.
+	\\
+	\vspace{1ex}
+		\item<3->
+Based on simulation results, our proposed algorithm is valid and fairly close to the exact optimized algorithm  based on both node scores and edge scores in specificity of detecting optimized subnetwork.
+		\item<4->
+Based on simulation results, our proposed algorithm have higher specificity in detecting optimized subnetwork than the one based on node scores only.
+	\en 
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]
+  \frametitle{Future work}
+  \bn
+  	\item<1->
+Run simulation compared our algorithm to other score based optimization methods and other types of the algorithms to detect potential functional module in the network
+\\
+\vspace{1ex}
+	\item<2->
+Run simulation under other random graphical models such as Gaussian graphical model and stochastic blockmodel
+\\
+\vspace{1ex}
+	\item<3->
+Apply our proposed algorithm to real datasets such as cardiovascular disease metabolomics study from Women's Health Initiative cohort study. 
+  \en 
+\end{frame}
+
+
+\section{Reference}
+\begin{frame}
+	\frametitle<presentation>{References-1}    
+	\begin{thebibliography}{6}    
+		\beamertemplatearticlebibitems
+		\bibitem{ba1}
+		Barab\'{a}si, Albert-L\'{a}szl\'{o}; Albert, R\'{e}ka 
+		\newblock Emergence of scaling in random networks. 
+		\newblock {\em Science}, 286 (5439): 509-512, 1999.
+		\bibitem{bd1}
+		Beisser,D.,  Dittrich MT  et al. 
+		\newblock Bionet: an R-package for the functional analysis of biological networks
+		\newblock {\em Bioinformatics,} 26, 1129-1130, 2010.
+			\bibitem{bd2}
+			Beisser,D.,  Dittrich MT  et al. 
+			\newblock Robustness and accuracy of functional modules in integrated network analysis.  
+			\newblock {\em Bioinformatics,} 28, 1887-1894, 2012.
+				\bibitem{di1}
+				Dittrich MT  et al. 
+				\newblock Identifying functional modules in protein-protein interaction networks: an integrated exact approach. 
+				\newblock {\em Bioinformatics,} 24, i223-i231, 2008.
+	\end{thebibliography}
+\end{frame}
+
+\begin{frame}
+	\frametitle<presentation>{References-2}    
+	\begin{thebibliography}{6}    
+	
+				\beamertemplatearticlebibitems
+		\bibitem{er1}
+     Erd\"{o}s, P., R\'{e}nyi, A.
+		\newblock On Random Graphs. 
+		\newblock {\em Publicationes Mathematicae}, 6: 290-297,1959
+			\beamertemplatearticlebibitems
+			\bibitem{ps1}
+			Phipson B, Smyth GK. 
+			\newblock 	Permutation P-values should never be zero: calculating exact P-values when permutations are randomly drawn.	\newblock {\em Stat Appl Genet Mol Biol,} 9,1544-6115,2010	
+				
+		\bibitem{guo1}
+Guo,Z. et al.  \newblock Edge-based scoring and searching method for identifying condition responsive protein-protein interaction sub-network. \newblock {\em Bioinformatics,} 23, 2121-2128,2007
+\bibitem{id1}
+Ideker,T. et al. \newblock Discovering regulatory and signalling circuits in molecular interaction networks. \newblock {\em Bioinformatics,} 18(Suppl. 1), S233-S240,2002
+	\end{thebibliography}
+\end{frame}
+
+\end{document}
